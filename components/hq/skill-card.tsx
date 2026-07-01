@@ -9,6 +9,7 @@ import {
   skillStatusMeta,
 } from "@/lib/ui"
 import { StatusBadge, MonoTag } from "@/components/hq/status-badge"
+import { SkillCompleteToggle } from "@/components/hq/skill-complete-toggle"
 
 export function SkillCard({ skill }: { skill: Skill }) {
   const status = skillStatusMeta(skill.status)
@@ -54,6 +55,7 @@ export function SkillCard({ skill }: { skill: Skill }) {
         </div>
 
         <div className="flex shrink-0 flex-col items-end gap-2">
+          <SkillCompleteToggle skillId={skill.id} isDone={isDone} />
           <StatusBadge label={status.label} tone={status.accent} />
           <span
             className={cn("size-2 rounded-full", prio.dot)}

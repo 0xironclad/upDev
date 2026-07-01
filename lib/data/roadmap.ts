@@ -81,3 +81,57 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 export async function getCareerItems() {
   return db.select().from(careerItems).orderBy(asc(careerItems.createdAt))
 }
+
+export type SkillDetail = {
+  skill: Skill
+  phase: Phase | null
+  track: Track | null
+  prev: Skill | null
+  next: Skill | null
+  relatedProjects: Project[]
+}
+
+/** Everything the skill detail page needs, composed in one place. */
+export async function getSkillDetail(slug: string): Promise<SkillDetail | null> {
+  const skill = await getSkillBySlug(slug)
+  if (!skill) return null
+
+  const [phase, track, phaseSkills, allProjects] = await Promise.all([
+    skill.phaseId
+      ? db
+          .select()
+          .from(phases)
+          .where(eq(phases.id, skill.phaseId))
+          .then((r) => r[0] ?? null)
+      : Promise.resolve(null),
+    skill.trackId
+      ? db
+          .select()
+          .from(tracks)
+          .where(eq(tracks.id, skill.trackId))
+          .then((r) => r[0] ?? null)
+      : Promise.resolve(null),
+    skill.phaseId
+      ? db
+          .select()
+          .from(skills)
+          .where(eq(skills.phaseId, skill.phaseId))
+          .orderBy(asc(skills.order))
+      : Promise.resolve([] as Skill[]),
+    getProjects(),
+  ])
+
+  const idx = phaseSkills.findIndex((s) => s.id === skill.id)
+  const prev = idx > 0 ? phaseSkills[idx - 1] : null
+  const next =
+    idx >= 0 && idx < phaseSkills.length - 1 ? phaseSkills[idx + 1] : null
+
+  const relatedProjects = allProjects.filter((p) =>
+    (p.skillsDemonstrated ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .includes(skill.id)
+  )
+
+  return { skill, phase, track, prev, next, relatedProjects }
+}
