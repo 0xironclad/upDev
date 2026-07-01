@@ -1,9 +1,5 @@
 # upDev
 
-Collins's personal engineering growth platform ("Cracked Dev HQ") — a single
-place to track the journey from full-stack TypeScript engineer to AI + Cloud
-specialist. Roadmap content (tracks, phases, skills, projects) is fixed and
-lives in the database seed.
 
 ## Stack
 
