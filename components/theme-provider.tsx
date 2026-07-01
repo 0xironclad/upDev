@@ -3,8 +3,7 @@
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 
-// upDev is a dark, terminal-style engineering tool — single forced dark theme,
-// no toggle. forcedTheme keeps the `dark` class on <html> so the HQ palette applies.
+// Light "paper" theme by default, with a manual light/dark toggle.
 function ThemeProvider({
   children,
   ...props
@@ -12,7 +11,7 @@ function ThemeProvider({
   return (
     <NextThemesProvider
       attribute="class"
-      forcedTheme="dark"
+      defaultTheme="light"
       enableSystem={false}
       disableTransitionOnChange
       {...props}

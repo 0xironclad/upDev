@@ -9,6 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { ThemeToggle } from "@/components/hq/theme-toggle"
 
 /**
  * Mobile header bar (lg:hidden) with a hamburger that opens the sidebar in a
@@ -39,6 +40,7 @@ export function MobileNav({ children }: { children: React.ReactNode }) {
       <div className="font-mono text-xs uppercase tracking-widest text-hq-text-muted">
         Cracked Dev <span className="hq-glow text-hq-amber">HQ</span>
       </div>
+      <ThemeToggle className="ml-auto" />
     </div>
   )
 }

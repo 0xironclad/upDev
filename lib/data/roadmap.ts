@@ -1,6 +1,6 @@
 import "server-only"
 
-import { asc, desc, eq } from "drizzle-orm"
+import { asc, desc, eq, inArray } from "drizzle-orm"
 
 import { db } from "@/db"
 import {
@@ -76,6 +76,52 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     .from(projects)
     .where(eq(projects.slug, slug))
   return project ?? null
+}
+
+/** Skills for a comma-separated id list, preserving the given order. */
+export async function getSkillsByIds(ids: string[]): Promise<Skill[]> {
+  if (ids.length === 0) return []
+  const rows = await db.select().from(skills).where(inArray(skills.id, ids))
+  const byId = new Map(rows.map((s) => [s.id, s]))
+  return ids.map((id) => byId.get(id)).filter((s): s is Skill => Boolean(s))
+}
+
+export type TrackPageData = {
+  track: Track
+  groups: { phase: Phase; skills: Skill[] }[]
+  stats: { total: number; completed: number; inProgress: number }
+}
+
+/** A track with its skills grouped by phase, plus summary stats. */
+export async function getTrackPageData(
+  trackId: string
+): Promise<TrackPageData | null> {
+  const [track] = await db.select().from(tracks).where(eq(tracks.id, trackId))
+  if (!track) return null
+
+  const [trackSkills, allPhases] = await Promise.all([
+    db
+      .select()
+      .from(skills)
+      .where(eq(skills.trackId, trackId))
+      .orderBy(asc(skills.order)),
+    getPhases(),
+  ])
+
+  const groups = allPhases
+    .map((phase) => ({
+      phase,
+      skills: trackSkills.filter((s) => s.phaseId === phase.id),
+    }))
+    .filter((g) => g.skills.length > 0)
+
+  const stats = {
+    total: trackSkills.length,
+    completed: trackSkills.filter((s) => s.isDone).length,
+    inProgress: trackSkills.filter((s) => s.status === "in_progress").length,
+  }
+
+  return { track, groups, stats }
 }
 
 export async function getCareerItems() {

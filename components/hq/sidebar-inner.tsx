@@ -4,6 +4,7 @@ import type { Phase, Skill } from "@/db/schema"
 import type { Progress } from "@/lib/progress"
 import { NavLinks } from "@/components/hq/nav-links"
 import { ThinProgress } from "@/components/hq/thin-progress"
+import { ThemeToggle } from "@/components/hq/theme-toggle"
 
 export function SidebarInner({
   phase,
@@ -19,11 +20,14 @@ export function SidebarInner({
   return (
     <div className="flex h-full flex-col">
       {/* App identity */}
-      <div className="border-b border-hq-border p-4">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-hq-text-muted">
-          Cracked Dev
+      <div className="flex items-start justify-between border-b border-hq-border p-4">
+        <div>
+          <div className="font-mono text-[10px] uppercase tracking-widest text-hq-text-muted">
+            Cracked Dev
+          </div>
+          <div className="hq-glow text-lg font-semibold text-hq-amber">HQ</div>
         </div>
-        <div className="hq-glow text-lg font-semibold text-hq-amber">HQ</div>
+        <ThemeToggle />
       </div>
 
       {/* Phase indicator pill */}
