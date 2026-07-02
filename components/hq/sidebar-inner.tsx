@@ -5,6 +5,8 @@ import type { Progress } from "@/lib/progress"
 import { NavLinks } from "@/components/hq/nav-links"
 import { ThinProgress } from "@/components/hq/thin-progress"
 import { ThemeToggle } from "@/components/hq/theme-toggle"
+import { SignOutButton } from "@/components/hq/sign-out-button"
+import { isSupabaseConfigured } from "@/lib/supabase/config"
 
 export function SidebarInner({
   phase,
@@ -61,8 +63,11 @@ export function SidebarInner({
           </div>
         )}
         <ThinProgress value={overall.percentage} tone="green" />
-        <div className="mt-1.5 font-mono text-xs text-hq-text-muted">
-          {overall.percentage}% complete
+        <div className="mt-1.5 flex items-center justify-between gap-2">
+          <span className="font-mono text-xs text-hq-text-muted">
+            {overall.percentage}% complete
+          </span>
+          {isSupabaseConfigured() && <SignOutButton />}
         </div>
       </div>
     </div>

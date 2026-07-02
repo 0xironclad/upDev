@@ -5,7 +5,6 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Toaster } from "@/components/ui/sonner"
-import { AppFrame } from "@/components/hq/app-frame"
 import { cn } from "@/lib/utils"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
@@ -36,9 +35,7 @@ export default function RootLayout({
     >
       <body className="bg-hq-bg text-hq-text">
         <ThemeProvider>
-          <TooltipProvider delayDuration={200}>
-            <AppFrame>{children}</AppFrame>
-          </TooltipProvider>
+          <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
           <Toaster />
         </ThemeProvider>
       </body>
