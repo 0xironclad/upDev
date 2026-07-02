@@ -13,11 +13,31 @@ export type CareerCategory = (typeof CAREER_CATEGORIES)[number]
 
 export const CATEGORY_META: Record<
   CareerCategory,
-  { label: string; icon: LucideIcon }
+  { label: string; icon: LucideIcon; empty: string }
 > = {
-  resume: { label: "Resume", icon: FileText },
-  portfolio: { label: "Portfolio", icon: FolderGit2 },
-  skill_proven: { label: "Skill Proven", icon: BadgeCheck },
-  interview_prep: { label: "Interview Prep", icon: MessagesSquare },
-  application: { label: "Application", icon: Send },
+  resume: {
+    label: "Resume",
+    icon: FileText,
+    empty: "No resume items yet. Start with the Alignerr reframe.",
+  },
+  portfolio: {
+    label: "Portfolio",
+    icon: FolderGit2,
+    empty: "No portfolio items yet. Ship the Eval Harness Starter first.",
+  },
+  skill_proven: {
+    label: "Skill Proven",
+    icon: BadgeCheck,
+    empty: "No proofs yet. AWS SAA is the highest-ROI credential here.",
+  },
+  interview_prep: {
+    label: "Interview Prep",
+    icon: MessagesSquare,
+    empty: "No prep yet. Build system-design talking points from a real project.",
+  },
+  application: {
+    label: "Application",
+    icon: Send,
+    empty: "No applications out yet. Target one specialist role to start.",
+  },
 }

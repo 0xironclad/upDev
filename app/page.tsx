@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, ExternalLink } from "lucide-react"
 
@@ -20,6 +21,7 @@ import { ThinProgress } from "@/components/hq/thin-progress"
 import { ProjectCard } from "@/components/hq/project-card"
 import { PhaseTimeline, type PhaseNode } from "@/components/hq/phase-timeline"
 
+export const metadata: Metadata = { title: "Dashboard" }
 export const dynamic = "force-dynamic"
 
 const panel = "rounded-md border border-hq-border bg-hq-surface p-4"

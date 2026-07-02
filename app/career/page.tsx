@@ -63,7 +63,7 @@ export default async function CareerPage() {
                   ))
                 ) : (
                   <p className="rounded-md border border-dashed border-hq-border p-3 text-xs text-hq-text-muted">
-                    Nothing here yet. Use + to add one.
+                    {meta.empty}
                   </p>
                 )}
               </div>
