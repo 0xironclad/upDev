@@ -49,6 +49,13 @@ export async function getPhasesWithContent(): Promise<PhaseWithContent[]> {
   }))
 }
 
+export async function getSprints() {
+  return db
+    .select()
+    .from(weeklySprints)
+    .orderBy(desc(weeklySprints.weekStart))
+}
+
 export async function getActiveSprint() {
   const [active] = await db
     .select()
@@ -125,7 +132,12 @@ export async function getTrackPageData(
 }
 
 export async function getCareerItems() {
-  return db.select().from(careerItems).orderBy(asc(careerItems.createdAt))
+  // Stable tiebreak on title so cards don't reshuffle after a mutation
+  // (seeded rows can share createdAt timestamps).
+  return db
+    .select()
+    .from(careerItems)
+    .orderBy(asc(careerItems.createdAt), asc(careerItems.title))
 }
 
 export type SkillDetail = {

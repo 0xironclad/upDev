@@ -117,6 +117,28 @@ export function projectTypeMeta(type: string | null): StatusMeta {
   }
 }
 
+export function sprintStatusMeta(status: string): StatusMeta {
+  switch (status) {
+    case "active":
+      return { label: "ACTIVE", accent: "amber" }
+    case "done":
+      return { label: "DONE", accent: "green" }
+    default:
+      return { label: "PLANNED", accent: "muted" }
+  }
+}
+
+export function careerStatusMeta(status: string): StatusMeta {
+  switch (status) {
+    case "in_progress":
+      return { label: "IN PROGRESS", accent: "amber" }
+    case "done":
+      return { label: "DONE", accent: "green" }
+    default:
+      return { label: "TODO", accent: "muted" }
+  }
+}
+
 export function priorityAccent(priority: string): Accent {
   switch (priority) {
     case "high":
