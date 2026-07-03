@@ -17,9 +17,8 @@ import {
 
 import type { SkillResource } from "@/db/schema"
 import { getSkillDetail } from "@/lib/data/roadmap"
-import { accent, categoryAccent, skillStatusMeta, trackAccent } from "@/lib/ui"
+import { skillStatusMeta } from "@/lib/ui"
 import { cn } from "@/lib/utils"
-import { StatusBadge } from "@/components/hq/status-badge"
 import { ProjectCard } from "@/components/hq/project-card"
 import { SkillStatusControl } from "@/components/hq/skill-status-control"
 import { MarkCompleteButton } from "@/components/hq/mark-complete-button"
@@ -42,8 +41,7 @@ export default async function SkillDetailPage({ params }: Params) {
   const { skill, phase, track, prev, next, relatedProjects, resources } =
     detail
   const status = skillStatusMeta(skill.status)
-  const cat = accent(categoryAccent(skill.category))
-  const trackTone = accent(trackAccent(skill.trackId))
+  const isActive = skill.status === "in_progress"
   const learnItems = (skill.whatToLearn ?? "")
     .split("\n")
     .map((l) => l.trim())
@@ -84,41 +82,37 @@ export default async function SkillDetailPage({ params }: Params) {
 
       {/* Header */}
       <header className="mt-6">
-        <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-          {track && (
-            <span className={cn("uppercase", trackTone.text)}>{track.name}</span>
-          )}
-          {phase && (
-            <span className="text-hq-text-muted">· Phase {phase.number}</span>
-          )}
+        <div className="hq-overline text-hq-text-muted">
+          Waypoint
+          {phase && ` · Camp ${phase.number}`}
+          {track && ` · ${track.name}`}
         </div>
-
         <div className="mt-2 flex flex-wrap items-start justify-between gap-3">
-          <h1 className="text-3xl font-bold text-hq-text">{skill.title}</h1>
+          <h1 className="hq-display text-4xl font-extrabold text-hq-text">
+            {skill.title}
+          </h1>
           <SkillStatusControl skillId={skill.id} status={skill.status} />
         </div>
-
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-hq-text-secondary">
+          <span className="uppercase">{skill.id}</span>
+          <span
+            className={cn(
+              "tracking-[0.2em]",
+              isActive ? "text-hq-accent" : "text-hq-text-muted"
+            )}
+          >
+            {status.label}
+          </span>
           {skill.category && (
-            <span
-              className={cn(
-                "rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider",
-                cat.text,
-                cat.border,
-                cat.bg
-              )}
-            >
-              {skill.category}
-            </span>
+            <span className="text-hq-text-muted">{skill.category}</span>
           )}
-          <StatusBadge label={status.label} tone={status.accent} />
           {skill.linearIssueId && (
-            <span className="inline-flex items-center gap-1 rounded-sm bg-hq-elevated px-2 py-1 font-mono text-xs text-hq-cyan">
+            <span className="inline-flex items-center gap-1 text-hq-text-secondary">
               {skill.linearIssueId}
               <ExternalLink className="size-3" />
             </span>
           )}
-        </div>
+        </p>
       </header>
 
       {/* Why it matters */}
@@ -141,7 +135,7 @@ export default async function SkillDetailPage({ params }: Params) {
               return (
                 <li key={i} className="text-sm text-hq-text">
                   <div className="flex gap-2">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-hq-amber" />
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-hq-text-muted" />
                     <span>{item}</span>
                   </div>
                   {links && links.length > 0 && (
@@ -160,21 +154,19 @@ export default async function SkillDetailPage({ params }: Params) {
 
       {/* Expected capability */}
       {skill.capabilityAfter && (
-        <section className="mt-6 rounded-md bg-hq-elevated p-4">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-hq-text-muted">
+        <section className="mt-6 rounded-lg bg-hq-elevated p-4">
+          <div className="hq-overline text-hq-text-muted">
             After Completing This
           </div>
-          <p className="mt-1.5 text-sm text-hq-text">{skill.capabilityAfter}</p>
+          <p className="mt-2 text-sm text-hq-text">{skill.capabilityAfter}</p>
         </section>
       )}
 
       {/* Definition of done */}
       {skill.definitionOfDone && (
-        <section className="mt-6 rounded-md border border-hq-green/30 bg-hq-green/10 p-4">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-hq-green">
-            Definition of Done
-          </div>
-          <p className="mt-1.5 text-sm text-hq-text-secondary">
+        <section className="mt-6 rounded-lg border border-hq-border p-4">
+          <div className="hq-overline text-hq-text">Definition of Done</div>
+          <p className="mt-2 text-sm text-hq-text-secondary">
             {skill.definitionOfDone}
           </p>
           {skill.status !== "completed" && (
@@ -196,9 +188,9 @@ export default async function SkillDetailPage({ params }: Params) {
               href={skill.resourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 flex items-center gap-3 rounded-md border border-hq-border bg-hq-surface p-3 transition-colors hover:border-hq-amber/40 hover:bg-hq-elevated"
+              className="mt-2 flex items-center gap-3 rounded-lg border border-hq-border bg-hq-surface p-3 transition-colors duration-150 hover:border-hq-accent/40 hover:bg-hq-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
             >
-              <ExternalLink className="size-4 shrink-0 text-hq-cyan" />
+              <ExternalLink className="size-4 shrink-0 text-hq-text-secondary" />
               <div className="min-w-0">
                 <div className="text-sm text-hq-text">
                   {skill.resourceLabel ?? "Open resource"}
@@ -246,7 +238,7 @@ export default async function SkillDetailPage({ params }: Params) {
         )}
         <Link
           href="/roadmap"
-          className="font-mono text-xs text-hq-cyan hover:underline"
+          className="font-mono text-xs text-hq-text-secondary hover:text-hq-text hover:underline"
         >
           Back to Roadmap
         </Link>
@@ -286,9 +278,9 @@ function ResourceChip({ resource }: { resource: SkillResource }) {
       target="_blank"
       rel="noopener noreferrer"
       title={`${resource.kind} · ${resource.url}`}
-      className="inline-flex items-center gap-1 rounded-sm border border-hq-border bg-hq-surface px-1.5 py-0.5 font-mono text-[11px] text-hq-text-secondary transition-colors duration-150 hover:border-hq-cyan/40 hover:bg-hq-elevated hover:text-hq-text"
+      className="inline-flex items-center gap-1 rounded-sm border border-hq-border bg-hq-surface px-1.5 py-0.5 font-mono text-[11px] text-hq-text-secondary transition-colors duration-150 hover:border-hq-accent/40 hover:bg-hq-elevated hover:text-hq-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
     >
-      <Icon className="size-3 shrink-0 text-hq-cyan" />
+      <Icon className="size-3 shrink-0 text-hq-text-secondary" />
       {resource.label}
     </a>
   )
@@ -296,8 +288,8 @@ function ResourceChip({ resource }: { resource: SkillResource }) {
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-hq-text-muted">
-      <span className="text-hq-green">&gt;</span>
+    <div className="hq-overline flex items-center gap-1.5 text-hq-text-muted">
+      <span className="text-hq-accent">&gt;</span>
       {children}
     </div>
   )
