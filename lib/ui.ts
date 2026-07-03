@@ -65,9 +65,12 @@ export function categoryAccent(category: string | null): Accent {
     case "AWS":
     case "Kubernetes":
     case "Terraform":
+    case "CI/CD":
+    case "Operations":
       return "cyan"
     case "Evals":
     case "System Design":
+    case "Interview Prep":
       return "green"
     default:
       return "amber"
@@ -114,6 +117,28 @@ export function projectTypeMeta(type: string | null): StatusMeta {
       return { label: "INTERMEDIATE", accent: "green" }
     default:
       return { label: "EXPERIMENT", accent: "muted" }
+  }
+}
+
+export function sprintStatusMeta(status: string): StatusMeta {
+  switch (status) {
+    case "active":
+      return { label: "ACTIVE", accent: "amber" }
+    case "done":
+      return { label: "DONE", accent: "green" }
+    default:
+      return { label: "PLANNED", accent: "muted" }
+  }
+}
+
+export function careerStatusMeta(status: string): StatusMeta {
+  switch (status) {
+    case "in_progress":
+      return { label: "IN PROGRESS", accent: "amber" }
+    case "done":
+      return { label: "DONE", accent: "green" }
+    default:
+      return { label: "TODO", accent: "muted" }
   }
 }
 

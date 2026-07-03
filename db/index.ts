@@ -3,7 +3,9 @@ import postgres from "postgres"
 
 import * as schema from "./schema"
 
-const connectionString = process.env.DATABASE_URL
+// Prefer the Supabase connection when present; fall back to local Postgres.
+const connectionString =
+  process.env.DATABASE_URL_SUPABASE ?? process.env.DATABASE_URL
 
 if (!connectionString) {
   throw new Error("DATABASE_URL is not set. See .env.local.example.")
