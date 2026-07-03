@@ -65,9 +65,12 @@ export function categoryAccent(category: string | null): Accent {
     case "AWS":
     case "Kubernetes":
     case "Terraform":
+    case "CI/CD":
+    case "Operations":
       return "cyan"
     case "Evals":
     case "System Design":
+    case "Interview Prep":
       return "green"
     default:
       return "amber"

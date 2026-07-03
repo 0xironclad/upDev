@@ -7,6 +7,7 @@ import { z } from "zod"
 import { db } from "@/db"
 import { weeklySprints } from "@/db/schema"
 import type { ActionResult } from "@/app/actions/roadmap"
+import { requireOwner } from "@/lib/supabase/auth"
 
 const updateSchema = z.object({
   focus: z.string().max(4000).optional(),
@@ -21,6 +22,9 @@ export async function updateSprint(
   sprintId: string,
   fields: z.input<typeof updateSchema>
 ): Promise<ActionResult> {
+  const auth = await requireOwner()
+  if (!auth.ok) return { success: false, error: auth.error }
+
   const id = z.string().uuid().safeParse(sprintId)
   const parsed = updateSchema.safeParse(fields)
   if (!id.success || !parsed.success) {
@@ -50,6 +54,9 @@ const createSchema = z.object({
 export async function createSprint(
   data: z.input<typeof createSchema>
 ): Promise<ActionResult> {
+  const auth = await requireOwner()
+  if (!auth.ok) return { success: false, error: auth.error }
+
   const parsed = createSchema.safeParse(data)
   if (!parsed.success) {
     return { success: false, error: "Invalid sprint details." }
@@ -65,6 +72,14 @@ export async function createSprint(
     revalidatePath("/", "layout")
     return { success: true }
   } catch (err) {
+    if (
+      err &&
+      typeof err === "object" &&
+      "code" in err &&
+      err.code === "23505"
+    ) {
+      return { success: false, error: "A sprint for that week already exists." }
+    }
     console.error("createSprint failed", err)
     return { success: false, error: "Could not create sprint." }
   }

@@ -6,6 +6,7 @@ import { z } from "zod"
 
 import { db } from "@/db"
 import { projects, skills } from "@/db/schema"
+import { requireOwner } from "@/lib/supabase/auth"
 
 export type ActionResult = { success: boolean; error?: string }
 
@@ -35,6 +36,9 @@ export async function updateSkillStatus(
   skillId: string,
   status: string
 ): Promise<ActionResult> {
+  const auth = await requireOwner()
+  if (!auth.ok) return { success: false, error: auth.error }
+
   const parsedId = idSchema.safeParse(skillId)
   const parsedStatus = skillStatusSchema.safeParse(status)
   if (!parsedId.success || !parsedStatus.success) {
@@ -67,6 +71,9 @@ export async function updateProjectStatus(
   projectId: string,
   status: string
 ): Promise<ActionResult> {
+  const auth = await requireOwner()
+  if (!auth.ok) return { success: false, error: auth.error }
+
   const parsedId = idSchema.safeParse(projectId)
   const parsedStatus = projectStatusSchema.safeParse(status)
   if (!parsedId.success || !parsedStatus.success) {

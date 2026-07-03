@@ -7,6 +7,7 @@ import { z } from "zod"
 import { db } from "@/db"
 import { careerItems } from "@/db/schema"
 import type { ActionResult } from "@/app/actions/roadmap"
+import { requireOwner } from "@/lib/supabase/auth"
 
 const categorySchema = z.enum([
   "resume",
@@ -33,6 +34,9 @@ const upsertSchema = z.object({
 export async function upsertCareerItem(
   data: z.input<typeof upsertSchema>
 ): Promise<ActionResult> {
+  const auth = await requireOwner()
+  if (!auth.ok) return { success: false, error: auth.error }
+
   const parsed = upsertSchema.safeParse(data)
   if (!parsed.success) {
     return { success: false, error: "Invalid career item." }
@@ -64,6 +68,9 @@ export async function updateCareerStatus(
   id: string,
   status: string
 ): Promise<ActionResult> {
+  const auth = await requireOwner()
+  if (!auth.ok) return { success: false, error: auth.error }
+
   const parsedId = z.string().uuid().safeParse(id)
   const parsedStatus = statusSchema.safeParse(status)
   if (!parsedId.success || !parsedStatus.success) {

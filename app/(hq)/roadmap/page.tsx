@@ -108,9 +108,17 @@ export default async function RoadmapPage() {
                     </span>
                   </div>
                   {phase.goal && (
-                    <p className="mt-3 text-sm text-hq-text-secondary">
-                      {phase.goal}
-                    </p>
+                    <details
+                      className="mt-3"
+                      open={!(prog.completed === prog.total && prog.total > 0)}
+                    >
+                      <summary className="cursor-pointer font-mono text-xs uppercase tracking-widest text-hq-text-muted">
+                        Phase goal
+                      </summary>
+                      <p className="mt-1.5 text-sm text-hq-text-secondary">
+                        {phase.goal}
+                      </p>
+                    </details>
                   )}
                 </div>
 

@@ -4,6 +4,7 @@ import { getSprints } from "@/lib/data/roadmap"
 import { nextMonday } from "@/lib/format"
 import { SectionLabel } from "@/components/hq/section-label"
 import { SprintEditor } from "@/components/hq/sprint-editor"
+import { StudyActivity } from "@/components/hq/study-activity"
 import { NewSprintDialog } from "@/components/hq/new-sprint-dialog"
 
 export const metadata: Metadata = { title: "Weekly Sprints" }
@@ -42,6 +43,10 @@ export default async function SprintsPage() {
         </div>
         <NewSprintDialog defaultWeekStart={suggestedStart} />
       </header>
+
+      <div className="mt-8">
+        <StudyActivity sprints={sprints} />
+      </div>
 
       {ordered.length > 0 ? (
         <div className="mt-8 space-y-4">

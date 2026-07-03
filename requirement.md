@@ -846,3 +846,33 @@ Collins's personal engineering growth platform. Tracks the journey from full-sta
 9. **Error handling on server actions.** Every server action returns `{ success: boolean; error?: string }`. The calling client component displays the error in a toast if `success` is false.
 
 10. **Mobile-first responsive.** Build Tailwind classes mobile-first (`base` → `sm:` → `lg:`). The app must be usable on a phone, not just desktop.
+
+---
+
+## Addendum — 2026-07-03 (post-audit)
+
+This section supersedes the parts of the original prompt it conflicts with. It codifies (a) the design system the app actually shipped with, and (b) roadmap v2, applied after an adversarial audit of the original curriculum.
+
+### A. Shipped design system (supersedes "Visual design direction")
+
+The build deliberately replaced the indigo/cyan palette with a **warm terminal / graph-paper** system, now the canonical design language. Tokens (dark theme, the primary one):
+
+- Background: `#0a0a0a` · Surface: `#141311` · Elevated: `#1e1b17` · Border: `#2a2723`
+- Accents: amber `#f5a524` (primary/AI), green `#8fc97f` (success/career), cyan `#5cb3c9` (cloud/infra), red `#e5644e` (destructive)
+- Text: `#e8e3d6` / secondary `#9b968a` / muted `#6b6659`
+- Track color map: **A = amber, B = cyan, C = green** (see `lib/ui.ts`)
+- A full **light theme** exists and is toggleable (`next-themes`); dark remains the reference theme.
+- Sanctioned exceptions to the "no gradients" rule: the progress spine (green→amber) and the faint graph-paper grid on `body`.
+- All other original design rules (radius, mono identifiers, thin progress bars, `transition-colors duration-150` only, no scale transforms) remain in force.
+
+### B. Roadmap v2 (supersedes the 12-skill seed)
+
+The audit found the original curriculum thin where 2026 hiring is thickest. v2 was then cross-checked topic-by-topic against the current roadmap.sh AI Engineer, DevOps, AWS, Kubernetes, and Terraform roadmaps (fetched from source, 2026-07-03); justified gaps were folded in (multimodal/computer-use agents, HF ecosystem + hands-on LoRA, K8s scheduling/storage internals, Terraform testing + IaC scanning, Docker depth, SES), while multi-cloud, Chef/Puppet, and Assistants-API-era topics were deliberately left out of scope. Changes, all reflected in `db/seed.ts`:
+
+- **17 skills, up from 12.** New: `a7` Model Serving & Inference Optimization (vLLM, quantization, batching, cost math), `b4` CI/CD & Container Delivery (pipelines, Trivy, OIDC, rollback), `b5` Observability, DR & Production Operations (alerts, restore drills, FinOps, runbooks), `c2` AI System Design (the LLM-system interview round), `c3` Coding Interview Maintenance (2 problems/week from Phase 2).
+- **B3 narrowed** to Terraform & Multi-Environment IaC (remote state, workspaces, promotion) — its former grab-bag of CI/CD + observability + secrets is now `b4`/`b5`.
+- **Existing skills deepened:** a0 gains streaming + prompt caching; a1 gains tool/function-calling depth + PII handling; a4 gains context engineering + semantic caching; a6 gains online evaluation (feedback, A/B, drift); a3/b0 got measurable definitions of done.
+- **Job search pulled forward:** first 10 applications land in Phase 3 (calibration), Phase 5 targets 50+ cumulative, referral-first. The "CKA-level" claim is softened to CKA-curriculum coverage (cert optional).
+- **P6 upgraded:** now serves an open-weights model via vLLM on the cluster (`a7`), and demonstrates `b4`/`b5`.
+- **6 new career items:** target list, calibration applications, referral pipeline, post-per-project, mock interviews, negotiation prep.
+- **Seeding is now state-preserving:** re-running `db/seed.ts` refreshes roadmap content but keeps skill/project statuses and never touches `weekly_sprints` / `career_items` rows you've created.

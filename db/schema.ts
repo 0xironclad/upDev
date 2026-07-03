@@ -76,7 +76,7 @@ export const projects = pgTable("projects", {
 export const weeklySprints = pgTable("weekly_sprints", {
   id: uuid("id").primaryKey().defaultRandom(),
   weekLabel: text("week_label"),
-  weekStart: date("week_start", { mode: "string" }),
+  weekStart: date("week_start", { mode: "string" }).unique(),
   status: text("status").default("planned").notNull(), // planned|active|done
   focus: text("focus"),
   wins: text("wins"),

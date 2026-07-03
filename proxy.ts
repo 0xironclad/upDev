@@ -3,9 +3,14 @@ import { NextResponse, type NextRequest } from "next/server"
 import { isSupabaseConfigured } from "@/lib/supabase/config"
 import { updateSession } from "@/lib/supabase/middleware"
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Auth gate is dormant until Supabase env vars are set (local-first dev).
-  if (!isSupabaseConfigured()) return NextResponse.next()
+  if (!isSupabaseConfigured()) {
+    if (process.env.NODE_ENV === "production") {
+      return new NextResponse("Auth is not configured.", { status: 503 })
+    }
+    return NextResponse.next()
+  }
   return updateSession(request)
 }
 

@@ -85,9 +85,9 @@ export function SprintEditor({ sprint }: { sprint: WeeklySprint }) {
                   aria-label={`Set ${i + 1} days`}
                   onClick={() => setDays(i + 1 === sprint.daysStudied ? i : i + 1)}
                   className={cn(
-                    "size-4 rounded-full border transition-[transform,background-color,border-color] duration-150 hover:scale-110 active:scale-90",
+                    "size-4 rounded-full border transition-colors duration-150",
                     filled
-                      ? "scale-100 border-hq-green bg-hq-green"
+                      ? "border-hq-green bg-hq-green"
                       : "border-hq-border hover:border-hq-green/60"
                   )}
                 />
