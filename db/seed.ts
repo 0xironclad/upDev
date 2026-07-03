@@ -2,10 +2,12 @@ import { config } from "dotenv"
 
 config({ path: ".env.local" })
 
+import { skillResourceSeed } from "./seed-resources"
 import {
   careerItems,
   phases,
   projects,
+  skillResources,
   skills,
   tracks,
   weeklySprints,
@@ -755,6 +757,7 @@ async function seed() {
     .from(projects)
 
   // Content tables reseed wholesale (FK-safe order)…
+  await db.delete(skillResources)
   await db.delete(projects)
   await db.delete(skills)
   await db.delete(phases)
@@ -763,6 +766,9 @@ async function seed() {
   await db.insert(tracks).values(trackSeed)
   await db.insert(phases).values(phaseSeed)
   await db.insert(skills).values(skillSeed)
+  if (skillResourceSeed.length > 0) {
+    await db.insert(skillResources).values(skillResourceSeed)
+  }
   await db.insert(projects).values(projectSeed)
 
   // …then user progress is re-applied for rows that still exist.
@@ -820,7 +826,7 @@ async function seed() {
   )
 
   console.log(
-    `Seeded ${trackSeed.length} tracks, ${phaseSeed.length} phases, ${skillSeed.length} skills, ${projectSeed.length} projects (progress preserved for ${skillState.length} skills / ${projectState.length} projects).`
+    `Seeded ${trackSeed.length} tracks, ${phaseSeed.length} phases, ${skillSeed.length} skills, ${skillResourceSeed.length} resources, ${projectSeed.length} projects (progress preserved for ${skillState.length} skills / ${projectState.length} projects).`
   )
   process.exit(0)
 }

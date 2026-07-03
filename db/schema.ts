@@ -71,6 +71,19 @@ export const projects = pgTable("projects", {
   order: integer("order"),
 })
 
+export const skillResources = pgTable("skill_resources", {
+  id: text("id").primaryKey(), // '<skillId>-<itemIndex>-<n>'
+  skillId: text("skill_id")
+    .references(() => skills.id, { onDelete: "cascade" })
+    .notNull(),
+  // Index into the skill's newline-split what_to_learn list; null = general.
+  itemIndex: integer("item_index"),
+  label: text("label").notNull(),
+  url: text("url").notNull(),
+  kind: text("kind").default("article").notNull(), // docs|video|course|article|book|repo|practice
+  order: integer("order"),
+})
+
 // Mutable, user-owned tables ------------------------------------------------
 
 export const weeklySprints = pgTable("weekly_sprints", {
@@ -101,6 +114,7 @@ export const careerItems = pgTable("career_items", {
 export type Track = typeof tracks.$inferSelect
 export type Phase = typeof phases.$inferSelect
 export type Skill = typeof skills.$inferSelect
+export type SkillResource = typeof skillResources.$inferSelect
 export type Project = typeof projects.$inferSelect
 export type WeeklySprint = typeof weeklySprints.$inferSelect
 export type CareerItem = typeof careerItems.$inferSelect
@@ -108,6 +122,7 @@ export type CareerItem = typeof careerItems.$inferSelect
 export type NewTrack = typeof tracks.$inferInsert
 export type NewPhase = typeof phases.$inferInsert
 export type NewSkill = typeof skills.$inferInsert
+export type NewSkillResource = typeof skillResources.$inferInsert
 export type NewProject = typeof projects.$inferInsert
 export type NewWeeklySprint = typeof weeklySprints.$inferInsert
 export type NewCareerItem = typeof careerItems.$inferInsert

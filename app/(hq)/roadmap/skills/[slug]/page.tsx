@@ -4,10 +4,18 @@ import { notFound } from "next/navigation"
 import {
   ArrowLeft,
   ArrowRight,
+  BookOpen,
   ChevronRight,
   ExternalLink,
+  FileText,
+  FolderGit2,
+  GraduationCap,
+  Newspaper,
+  PlayCircle,
+  Target,
 } from "lucide-react"
 
+import type { SkillResource } from "@/db/schema"
 import { getSkillDetail } from "@/lib/data/roadmap"
 import { accent, categoryAccent, skillStatusMeta, trackAccent } from "@/lib/ui"
 import { cn } from "@/lib/utils"
@@ -31,7 +39,8 @@ export default async function SkillDetailPage({ params }: Params) {
   const detail = await getSkillDetail(slug)
   if (!detail) notFound()
 
-  const { skill, phase, track, prev, next, relatedProjects } = detail
+  const { skill, phase, track, prev, next, relatedProjects, resources } =
+    detail
   const status = skillStatusMeta(skill.status)
   const cat = accent(categoryAccent(skill.category))
   const trackTone = accent(trackAccent(skill.trackId))
@@ -39,6 +48,18 @@ export default async function SkillDetailPage({ params }: Params) {
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean)
+
+  const itemResources = new Map<number, SkillResource[]>()
+  const generalResources: SkillResource[] = []
+  for (const r of resources) {
+    if (r.itemIndex === null) {
+      generalResources.push(r)
+    } else {
+      const list = itemResources.get(r.itemIndex) ?? []
+      list.push(r)
+      itemResources.set(r.itemIndex, list)
+    }
+  }
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
@@ -114,13 +135,25 @@ export default async function SkillDetailPage({ params }: Params) {
       {learnItems.length > 0 && (
         <section className="mt-6">
           <SectionHeading>What to Learn</SectionHeading>
-          <ul className="mt-2 space-y-1.5">
-            {learnItems.map((item, i) => (
-              <li key={i} className="flex gap-2 text-sm text-hq-text">
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-hq-amber" />
-                <span>{item}</span>
-              </li>
-            ))}
+          <ul className="mt-2 space-y-2">
+            {learnItems.map((item, i) => {
+              const links = itemResources.get(i)
+              return (
+                <li key={i} className="text-sm text-hq-text">
+                  <div className="flex gap-2">
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-hq-amber" />
+                    <span>{item}</span>
+                  </div>
+                  {links && links.length > 0 && (
+                    <div className="mt-1 ml-3.5 flex flex-wrap gap-1.5">
+                      {links.map((r) => (
+                        <ResourceChip key={r.id} resource={r} />
+                      ))}
+                    </div>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         </section>
       )}
@@ -152,26 +185,37 @@ export default async function SkillDetailPage({ params }: Params) {
         </section>
       )}
 
-      {/* Resource */}
-      {skill.resourceUrl && (
+      {/* Resources */}
+      {(skill.resourceUrl || generalResources.length > 0) && (
         <section className="mt-6">
-          <SectionHeading>Resource</SectionHeading>
-          <a
-            href={skill.resourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 flex items-center gap-3 rounded-md border border-hq-border bg-hq-surface p-3 transition-colors hover:border-hq-amber/40 hover:bg-hq-elevated"
-          >
-            <ExternalLink className="size-4 shrink-0 text-hq-cyan" />
-            <div className="min-w-0">
-              <div className="text-sm text-hq-text">
-                {skill.resourceLabel ?? "Open resource"}
+          <SectionHeading>
+            {generalResources.length > 0 ? "Resources" : "Resource"}
+          </SectionHeading>
+          {skill.resourceUrl && (
+            <a
+              href={skill.resourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 flex items-center gap-3 rounded-md border border-hq-border bg-hq-surface p-3 transition-colors hover:border-hq-amber/40 hover:bg-hq-elevated"
+            >
+              <ExternalLink className="size-4 shrink-0 text-hq-cyan" />
+              <div className="min-w-0">
+                <div className="text-sm text-hq-text">
+                  {skill.resourceLabel ?? "Open resource"}
+                </div>
+                <div className="truncate font-mono text-xs text-hq-text-muted">
+                  {skill.resourceUrl}
+                </div>
               </div>
-              <div className="truncate font-mono text-xs text-hq-text-muted">
-                {skill.resourceUrl}
-              </div>
+            </a>
+          )}
+          {generalResources.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {generalResources.map((r) => (
+                <ResourceChip key={r.id} resource={r} />
+              ))}
             </div>
-          </a>
+          )}
         </section>
       )}
 
@@ -219,6 +263,34 @@ export default async function SkillDetailPage({ params }: Params) {
         )}
       </nav>
     </div>
+  )
+}
+
+const RESOURCE_KIND_ICONS = {
+  docs: FileText,
+  video: PlayCircle,
+  course: GraduationCap,
+  book: BookOpen,
+  repo: FolderGit2,
+  practice: Target,
+  article: Newspaper,
+} as const
+
+function ResourceChip({ resource }: { resource: SkillResource }) {
+  const Icon =
+    RESOURCE_KIND_ICONS[resource.kind as keyof typeof RESOURCE_KIND_ICONS] ??
+    ExternalLink
+  return (
+    <a
+      href={resource.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={`${resource.kind} · ${resource.url}`}
+      className="inline-flex items-center gap-1 rounded-sm border border-hq-border bg-hq-surface px-1.5 py-0.5 font-mono text-[11px] text-hq-text-secondary transition-colors duration-150 hover:border-hq-cyan/40 hover:bg-hq-elevated hover:text-hq-text"
+    >
+      <Icon className="size-3 shrink-0 text-hq-cyan" />
+      {resource.label}
+    </a>
   )
 }
 
