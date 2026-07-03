@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowRight, ExternalLink } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 
 import {
   getCurrentPhase,
@@ -13,212 +13,203 @@ import {
   getPhasesWithContent,
   getUpcomingProjects,
 } from "@/lib/data/roadmap"
+import { buildRoute, formatAltitude } from "@/lib/route"
 import { greeting, formatLongDate } from "@/lib/format"
 import { skillStatusMeta } from "@/lib/ui"
 import { SectionLabel } from "@/components/hq/section-label"
-import { StatusBadge } from "@/components/hq/status-badge"
-import { ThinProgress } from "@/components/hq/thin-progress"
 import { ProjectCard } from "@/components/hq/project-card"
-import { PhaseTimeline, type PhaseNode } from "@/components/hq/phase-timeline"
+import { RouteChart } from "@/components/hq/route-chart"
 
 export const metadata: Metadata = { title: "Dashboard" }
 export const dynamic = "force-dynamic"
 
-const panel = "rounded-md border border-hq-border bg-hq-surface p-4"
+const DAY = 86_400_000
 
 export default async function DashboardPage() {
-  const [phasesWithContent, currentPhase, currentSkill, overall, nextSkill, sprint, upcoming] =
-    await Promise.all([
-      getPhasesWithContent(),
-      getCurrentPhase(),
-      getCurrentSkill(),
-      getOverallProgress(),
-      getNextSkill(),
-      getActiveSprint(),
-      getUpcomingProjects(3),
-    ])
+  const [
+    phasesWithContent,
+    currentPhase,
+    currentSkill,
+    overall,
+    nextSkill,
+    sprint,
+    upcoming,
+  ] = await Promise.all([
+    getPhasesWithContent(),
+    getCurrentPhase(),
+    getCurrentSkill(),
+    getOverallProgress(),
+    getNextSkill(),
+    getActiveSprint(),
+    getUpcomingProjects(3),
+  ])
 
-  const phaseProgressOf = (phaseId: string) => {
-    const p = phasesWithContent.find((x) => x.id === phaseId)
-    const total = p?.skills.length ?? 0
-    const completed = p?.skills.filter((s) => s.isDone).length ?? 0
-    return {
-      total,
-      completed,
-      percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
-    }
-  }
-
-  const currentPhaseProgress = currentPhase
-    ? phaseProgressOf(currentPhase.id)
-    : { total: 0, completed: 0, percentage: 0 }
-
-  const nodes: PhaseNode[] = phasesWithContent.map((p): PhaseNode => {
-    const prog = phaseProgressOf(p.id)
-    const done = prog.total > 0 && prog.completed === prog.total
-    return {
-      id: p.id,
-      number: p.number,
-      name: p.name,
-      state: done ? "completed" : p.id === currentPhase?.id ? "active" : "future",
-    }
-  })
-
+  const geo = buildRoute(phasesWithContent)
   const nextAction = nextSkill ?? currentSkill
   const activeMeta = currentSkill ? skillStatusMeta(currentSkill.status) : null
 
+  const daysToCamp = currentPhase?.dateEnd
+    ? Math.max(
+        0,
+        Math.ceil(
+          (Date.parse(`${currentPhase.dateEnd}T00:00:00Z`) - Date.now()) / DAY
+        )
+      )
+    : null
+
   return (
     <div className="mx-auto max-w-4xl px-6 py-8">
-      {/* HQ Header */}
+      {/* Header: where am I, at a glance */}
       <header>
-        <div className="font-mono text-xs uppercase tracking-widest text-hq-text-muted">
-          Cracked Dev HQ
+        <div className="hq-overline text-hq-text-muted">
+          {formatLongDate()}
         </div>
-        <h1 className="mt-1 text-3xl font-bold text-hq-text">
-          {greeting()}, Collins.
+        <h1 className="hq-display mt-2 text-4xl font-extrabold text-hq-text">
+          {greeting()}, Collins
         </h1>
-        <p className="mt-1 text-sm text-hq-text-secondary">{formatLongDate()}</p>
+        <p className="mt-2 font-mono text-xs text-hq-text-secondary">
+          {overall.completed} of {overall.total} waypoints cleared ·{" "}
+          {currentPhase
+            ? `Camp ${currentPhase.number}: ${currentPhase.name}`
+            : "Route complete"}
+        </p>
       </header>
 
-      {/* Status strip */}
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {/* Current Phase */}
-        <div className={panel}>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-hq-text-muted">
-            Current Phase
-          </div>
-          {currentPhase ? (
-            <>
-              <div className="mt-1 font-mono text-4xl font-bold text-hq-amber">
-                {String(currentPhase.number).padStart(2, "0")}
-              </div>
-              <div className="mt-1 text-sm font-semibold text-hq-text">
-                {currentPhase.name}
-              </div>
-              <div className="text-xs text-hq-text-secondary">
-                {currentPhase.window}
-              </div>
-              <ThinProgress
-                className="mt-3"
-                value={currentPhaseProgress.percentage}
-              />
-            </>
-          ) : (
-            <p className="mt-2 text-sm text-hq-text-muted">No active phase.</p>
-          )}
+      {/* The Route, mini */}
+      <div className="mt-6 rounded-lg border border-hq-border bg-hq-surface p-4">
+        <div className="flex items-baseline justify-between">
+          <span className="hq-overline text-hq-text-muted">The Route</span>
+          <span className="font-mono text-xs text-hq-text-secondary">
+            {formatAltitude(geo)}
+          </span>
         </div>
+        <Link
+          href="/roadmap"
+          aria-label="Open the roadmap"
+          className="mt-2 block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
+        >
+          <RouteChart geo={geo} variant="mini" />
+        </Link>
+      </div>
 
-        {/* Active Skill */}
-        <div className={panel}>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-hq-text-muted">
-            Active Skill
+      {/* Status strip: one bordered band, not three hero cards */}
+      <div className="mt-6 grid grid-cols-1 divide-y divide-hq-border rounded-lg border border-hq-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <div className="p-4">
+          <div className="hq-overline text-hq-text-muted">
+            Current waypoint
           </div>
           {currentSkill ? (
-            <>
-              <div className="mt-1 font-mono text-xs uppercase text-hq-text-muted">
-                {currentSkill.id} · {currentSkill.category}
+            <Link
+              href={`/roadmap/skills/${currentSkill.slug}`}
+              className="group mt-2 block"
+            >
+              <div className="font-mono text-lg text-hq-accent">
+                {currentSkill.id.toUpperCase()}
+                {activeMeta && (
+                  <span className="ml-2 align-middle font-mono text-[10px] tracking-[0.2em] text-hq-text-muted">
+                    {activeMeta.label}
+                  </span>
+                )}
               </div>
-              <div className="mt-1 text-sm font-semibold text-hq-text">
+              <div className="mt-0.5 truncate text-sm text-hq-text group-hover:underline">
                 {currentSkill.title}
               </div>
-              {activeMeta && (
-                <div className="mt-2">
-                  <StatusBadge label={activeMeta.label} tone={activeMeta.accent} />
-                </div>
-              )}
-              {currentSkill.linearIssueId && (
-                <div className="mt-2 inline-flex items-center gap-1 rounded-sm bg-hq-elevated px-1.5 py-0.5 font-mono text-xs text-hq-cyan">
-                  {currentSkill.linearIssueId}
-                  <ExternalLink className="size-3" />
-                </div>
-              )}
-            </>
+            </Link>
           ) : (
-            <p className="mt-2 text-sm text-hq-text-muted">No active skill.</p>
+            <p className="mt-2 text-sm text-hq-text-muted">
+              Nothing on the wall.
+            </p>
           )}
         </div>
-
-        {/* Overall Progress */}
-        <div className={panel}>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-hq-text-muted">
-            Overall Progress
+        <div className="p-4">
+          <div className="hq-overline text-hq-text-muted">This week</div>
+          <div className="mt-2 font-mono text-lg text-hq-text tabular-nums">
+            {sprint?.daysStudied ?? 0}
+            <span className="text-hq-text-muted">/7</span>
           </div>
-          <div className="mt-1 font-mono text-4xl font-bold text-hq-green">
-            {overall.percentage}%
+          <div className="mt-1 flex gap-1.5" aria-hidden>
+            {Array.from({ length: 7 }).map((_, i) => (
+              <span
+                key={i}
+                className={
+                  i < (sprint?.daysStudied ?? 0)
+                    ? "size-2 rounded-full bg-hq-text"
+                    : "size-2 rounded-full border border-hq-border"
+                }
+              />
+            ))}
           </div>
-          <div className="text-sm text-hq-text-secondary">
-            {overall.completed} of {overall.total} skills completed
+        </div>
+        <div className="p-4">
+          <div className="hq-overline text-hq-text-muted">Next camp</div>
+          <div className="mt-2 font-mono text-lg text-hq-text tabular-nums">
+            {currentPhase && daysToCamp !== null ? (
+              <>
+                C{currentPhase.number}
+                <span className="text-hq-text-muted">
+                  {" "}
+                  · {daysToCamp} days out
+                </span>
+              </>
+            ) : (
+              <span className="text-hq-text-muted">–</span>
+            )}
           </div>
-          <ThinProgress className="mt-3" value={overall.percentage} tone="green" />
-          <div className="mt-1.5 font-mono text-xs text-hq-text-muted">
-            Phase {currentPhase?.number ?? "–"} of {phasesWithContent.length}
+          <div className="mt-1 text-xs text-hq-text-secondary">
+            {currentPhase?.window ?? "No active phase"}
           </div>
         </div>
       </div>
 
       {/* Next action */}
       {nextAction && (
-        <section className="mt-6">
+        <section className="mt-10">
           <SectionLabel>Next Action</SectionLabel>
-          <div
-            className={`${panel} mt-2 flex items-center gap-4 bg-hq-elevated`}
-          >
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-hq-amber/15 font-mono text-sm font-bold text-hq-amber uppercase">
-              {nextAction.id}
-            </div>
+          <div className="mt-2 flex flex-wrap items-center gap-4 rounded-lg border border-hq-border bg-hq-surface p-5">
             <div className="min-w-0 flex-1">
-              <div className="text-lg font-semibold text-hq-text">
+              <div className="font-mono text-xs text-hq-accent">
+                {nextAction.id.toUpperCase()}
+              </div>
+              <div className="mt-1 text-lg font-semibold text-hq-text">
                 {nextAction.title}
               </div>
               {nextAction.whyItMatters && (
-                <p className="mt-0.5 line-clamp-1 text-sm text-hq-text-secondary">
+                <p className="mt-1 line-clamp-2 max-w-[60ch] text-sm text-hq-text-secondary">
                   {nextAction.whyItMatters}
                 </p>
               )}
             </div>
             <Link
               href={`/roadmap/skills/${nextAction.slug}`}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-sm border border-hq-amber/40 bg-hq-amber/10 px-3 py-1.5 text-sm text-hq-amber transition-colors hover:bg-hq-amber/20"
+              className="hq-display inline-flex shrink-0 items-center gap-2 rounded-sm bg-hq-accent px-4 py-2.5 text-xs font-bold text-hq-bg transition-colors duration-150 hover:bg-hq-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
             >
-              Open in Roadmap
+              Climb
               <ArrowRight className="size-4" />
             </Link>
           </div>
         </section>
       )}
 
-      {/* This week */}
-      <section className="mt-6">
+      {/* This week, in words */}
+      <section className="mt-10">
         <SectionLabel>This Week</SectionLabel>
-        <div className={`${panel} mt-2`}>
+        <div className="mt-2 border-t border-hq-border pt-3">
           {sprint ? (
             <>
-              <div className="flex items-center justify-between gap-3">
-                <div className="font-mono text-xs text-hq-text-secondary">
-                  {sprint.weekLabel}
-                </div>
-                <div className="flex gap-1">
-                  {Array.from({ length: 7 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className={
-                        i < sprint.daysStudied
-                          ? "size-2 rounded-full bg-hq-green"
-                          : "size-2 rounded-full border border-hq-border"
-                      }
-                    />
-                  ))}
-                </div>
+              <div className="font-mono text-xs text-hq-text-muted">
+                {sprint.weekLabel}
               </div>
-              <p className="mt-2 text-sm text-hq-text">{sprint.focus}</p>
+              <p className="mt-1.5 max-w-[68ch] text-sm text-hq-text">
+                {sprint.focus}
+              </p>
               {!sprint.wins && (
-                <p className="mt-2 text-sm text-hq-text-muted">
+                <p className="mt-1.5 text-sm text-hq-text-muted">
                   No wins logged yet. Open the sprint to add.
                 </p>
               )}
               <Link
                 href="/sprints"
-                className="mt-3 inline-block font-mono text-xs text-hq-cyan hover:underline"
+                className="mt-2 inline-block font-mono text-xs text-hq-text-secondary underline-offset-4 hover:text-hq-text hover:underline"
               >
                 Edit sprint →
               </Link>
@@ -233,7 +224,7 @@ export default async function DashboardPage() {
 
       {/* Upcoming projects */}
       {upcoming.length > 0 && (
-        <section className="mt-6">
+        <section className="mt-10">
           <SectionLabel>Upcoming Projects</SectionLabel>
           <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {upcoming.map((p) => (
@@ -242,14 +233,6 @@ export default async function DashboardPage() {
           </div>
         </section>
       )}
-
-      {/* Phase timeline */}
-      <section className="mt-8">
-        <SectionLabel>Phase Timeline</SectionLabel>
-        <div className={`${panel} mt-2`}>
-          <PhaseTimeline nodes={nodes} />
-        </div>
-      </section>
     </div>
   )
 }
