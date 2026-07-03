@@ -20,10 +20,16 @@ export function ProjectsFilter({ projects }: { projects: Project[] }) {
   return (
     <div>
       <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
-        <TabsList className="font-mono text-xs">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="building">Building</TabsTrigger>
-          <TabsTrigger value="shipped">Shipped</TabsTrigger>
+        <TabsList className="h-auto gap-1 bg-transparent p-0">
+          {(["all", "building", "shipped"] as const).map((v) => (
+            <TabsTrigger
+              key={v}
+              value={v}
+              className="rounded-sm px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-hq-text-muted data-active:bg-hq-elevated data-active:text-hq-text data-active:shadow-none"
+            >
+              {v}
+            </TabsTrigger>
+          ))}
         </TabsList>
       </Tabs>
 

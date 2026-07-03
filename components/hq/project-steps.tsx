@@ -73,20 +73,20 @@ export function ProjectSteps({
                 type="button"
                 onClick={() => toggle(i)}
                 aria-pressed={isChecked}
-                className="flex w-full items-start gap-3 text-left"
+                className="flex w-full items-start gap-3 rounded-sm text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
               >
                 <span
                   className={cn(
-                    "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-sm border transition-colors",
+                    "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-sm border transition-colors duration-150",
                     isChecked
-                      ? "border-hq-green bg-hq-green/20 text-hq-green"
-                      : "border-hq-border text-transparent hover:border-hq-green/60"
+                      ? "border-hq-text bg-hq-text text-hq-bg"
+                      : "border-hq-border text-transparent hover:border-hq-text/60"
                   )}
                 >
                   <Check className="size-3.5" />
                 </span>
                 <span className="flex gap-2 text-sm">
-                  <span className="font-mono text-hq-amber">{num}.</span>
+                  <span className="font-mono text-hq-accent">{num}.</span>
                   <span
                     className={cn(
                       "text-hq-text",

@@ -71,24 +71,25 @@ export default async function ProjectDetailPage({ params }: Params) {
 
       {/* Header */}
       <header className="mt-6">
-        <div className="flex flex-wrap items-center gap-2 font-mono text-xs uppercase text-hq-text-muted">
+        <div className="hq-overline text-hq-text-muted">
           {project.id} · {type.label}
-          {phase && <span>· Phase {phase.number}</span>}
+          {phase && ` · Camp ${phase.number}`}
         </div>
         <div className="mt-2 flex flex-wrap items-start justify-between gap-3">
-          <h1 className="text-3xl font-bold text-hq-text">{project.title}</h1>
+          <h1 className="hq-display text-4xl font-extrabold text-hq-text">
+            {project.title}
+          </h1>
           <ProjectStatusControl projectId={project.id} status={project.status} />
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <StatusBadge label={type.label} tone={type.accent} />
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           <StatusBadge label={status.label} tone={status.accent} />
         </div>
       </header>
 
       {/* Purpose */}
       {project.purpose && (
-        <section className="mt-8 flex gap-3 rounded-md bg-hq-elevated p-4">
-          <Target className="mt-0.5 size-4 shrink-0 text-hq-amber" />
+        <section className="mt-8 flex gap-3 rounded-lg bg-hq-elevated p-4">
+          <Target className="mt-0.5 size-4 shrink-0 text-hq-text-secondary" />
           <p className="text-sm text-hq-text">{project.purpose}</p>
         </section>
       )}
@@ -103,9 +104,9 @@ export default async function ProjectDetailPage({ params }: Params) {
                 <TooltipTrigger asChild>
                   <Link
                     href={`/roadmap/skills/${skill.slug}`}
-                    className="inline-flex items-center gap-1.5 rounded-sm border border-hq-border bg-hq-surface px-2 py-1 text-sm text-hq-text transition-colors hover:border-hq-amber/40 hover:bg-hq-elevated"
+                    className="inline-flex items-center gap-1.5 rounded-sm border border-hq-border bg-hq-surface px-2 py-1 text-sm text-hq-text transition-colors duration-150 hover:border-hq-accent/40 hover:bg-hq-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
                   >
-                    <span className="font-mono text-xs uppercase text-hq-amber">
+                    <span className="font-mono text-xs uppercase text-hq-text-secondary">
                       {skill.id}
                     </span>
                     {skill.title}
@@ -151,11 +152,9 @@ export default async function ProjectDetailPage({ params }: Params) {
 
       {/* What production means */}
       {project.whatProductionMeans && (
-        <section className="mt-6 rounded-md border border-hq-amber/30 bg-hq-amber/10 p-4">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-hq-amber">
-            What Production Means
-          </div>
-          <p className="mt-1.5 text-sm text-hq-text-secondary">
+        <section className="mt-6 rounded-lg border border-hq-border p-4">
+          <div className="hq-overline text-hq-accent">What Production Means</div>
+          <p className="mt-2 text-sm text-hq-text-secondary">
             {project.whatProductionMeans}
           </p>
         </section>
@@ -171,9 +170,9 @@ export default async function ProjectDetailPage({ params }: Params) {
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-md border border-hq-border bg-hq-surface p-3 text-sm text-hq-text transition-colors hover:border-hq-amber/40 hover:bg-hq-elevated"
+                className="flex items-center gap-2 rounded-lg border border-hq-border bg-hq-surface p-3 text-sm text-hq-text transition-colors duration-150 hover:border-hq-accent/40 hover:bg-hq-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
               >
-                <GitBranch className="size-4 text-hq-cyan" /> Repository
+                <GitBranch className="size-4 text-hq-text-secondary" /> Repository
               </a>
             )}
             {project.demoUrl && (
@@ -181,9 +180,9 @@ export default async function ProjectDetailPage({ params }: Params) {
                 href={project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-md border border-hq-border bg-hq-surface p-3 text-sm text-hq-text transition-colors hover:border-hq-amber/40 hover:bg-hq-elevated"
+                className="flex items-center gap-2 rounded-lg border border-hq-border bg-hq-surface p-3 text-sm text-hq-text transition-colors duration-150 hover:border-hq-accent/40 hover:bg-hq-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
               >
-                <ExternalLink className="size-4 text-hq-cyan" /> Live Demo
+                <ExternalLink className="size-4 text-hq-text-secondary" /> Live Demo
               </a>
             )}
           </div>
@@ -197,7 +196,7 @@ export default async function ProjectDetailPage({ params }: Params) {
       <nav className="mt-10 border-t border-hq-border pt-4">
         <Link
           href="/projects"
-          className="font-mono text-xs text-hq-cyan hover:underline"
+          className="font-mono text-xs text-hq-text-secondary hover:text-hq-text hover:underline"
         >
           ← Back to Projects
         </Link>
