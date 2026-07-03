@@ -80,17 +80,18 @@ export function categoryAccent(category: string | null): Accent {
 type StatusMeta = { label: string; accent: Accent }
 
 export function skillStatusMeta(status: string): StatusMeta {
+  // Expedition vocabulary (DESIGN.md §6); data values are unchanged.
   switch (status) {
     case "in_progress":
-      return { label: "IN PROGRESS", accent: "amber" }
+      return { label: "CLIMBING", accent: "amber" }
     case "reviewing":
       return { label: "REVIEWING", accent: "cyan" }
     case "completed":
-      return { label: "COMPLETED", accent: "green" }
+      return { label: "CLEARED", accent: "green" }
     case "blocked":
       return { label: "BLOCKED", accent: "red" }
     default:
-      return { label: "NOT STARTED", accent: "muted" }
+      return { label: "QUEUED", accent: "muted" }
   }
 }
 

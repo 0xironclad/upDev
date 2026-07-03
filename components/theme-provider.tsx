@@ -3,7 +3,7 @@
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 
-// Light "paper" theme by default, with a manual light/dark toggle.
+// Graphite (dark) is Ascent's native theme; Whiteout stays a manual toggle.
 function ThemeProvider({
   children,
   ...props
@@ -11,7 +11,7 @@ function ThemeProvider({
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="light"
+      defaultTheme="dark"
       enableSystem={false}
       disableTransitionOnChange
       {...props}

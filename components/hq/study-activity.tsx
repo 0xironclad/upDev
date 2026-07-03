@@ -33,7 +33,7 @@ export function StudyActivity({ sprints }: { sprints: WeeklySprint[] }) {
   return (
     <div>
       <SectionLabel>Study Activity</SectionLabel>
-      <p className="mt-1 text-sm text-hq-text-secondary">
+      <p className="mt-1 font-mono text-xs text-hq-text-secondary">
         {recentDays} days studied in the last 4 weeks
       </p>
       <div className="mt-3 overflow-x-auto">
@@ -46,7 +46,7 @@ export function StudyActivity({ sprints }: { sprints: WeeklySprint[] }) {
                     key={i}
                     className={cn(
                       "size-2 rounded-full transition-colors duration-150",
-                      i < week.daysStudied ? "bg-hq-amber" : "bg-hq-border"
+                      i < week.daysStudied ? "bg-hq-text" : "bg-hq-border"
                     )}
                   />
                 ))}

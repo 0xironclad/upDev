@@ -37,8 +37,9 @@ export function MobileNav({ children }: { children: React.ReactNode }) {
           </div>
         </SheetContent>
       </Sheet>
-      <div className="font-mono text-xs uppercase tracking-widest text-hq-text-muted">
-        Cracked Dev <span className="hq-glow text-hq-amber">HQ</span>
+      <div className="flex items-baseline gap-1.5">
+        <span className="hq-overline text-hq-text-muted">Cracked Dev</span>
+        <span className="hq-display text-lg font-extrabold text-hq-text">HQ</span>
       </div>
       <ThemeToggle className="ml-auto" />
     </div>

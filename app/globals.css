@@ -8,20 +8,26 @@
     --font-heading: var(--font-sans);
     --font-sans: var(--font-sans);
     --font-mono: var(--font-mono);
-    /* HQ palette — warm terminal / graph-paper design tokens.
-       Values resolve from the light/dark blocks below so utilities like
-       bg-hq-surface, text-hq-amber, border-hq-border stay theme-aware. */
+    /* Ascent design tokens (see DESIGN.md) — graphite monochrome plus one
+       expedition-orange accent. Values resolve from the light/dark blocks
+       below so utilities like bg-hq-surface stay theme-aware. */
     --color-hq-bg: var(--hq-bg);
     --color-hq-surface: var(--hq-surface);
     --color-hq-elevated: var(--hq-elevated);
     --color-hq-border: var(--hq-border);
-    --color-hq-amber: var(--hq-amber);
-    --color-hq-green: var(--hq-green);
-    --color-hq-cyan: var(--hq-cyan);
-    --color-hq-red: var(--hq-red);
+    --color-hq-accent: var(--hq-accent);
+    --color-hq-danger: var(--hq-danger);
     --color-hq-text: var(--hq-text);
     --color-hq-text-secondary: var(--hq-text-secondary);
     --color-hq-text-muted: var(--hq-text-muted);
+    /* Legacy names, remapped to Ascent semantics during migration:
+       amber → accent · green → solid text (done = solidity, not a hue) ·
+       cyan → secondary text · red → danger. Components move to the semantic
+       names above; these aliases keep unmigrated screens coherent. */
+    --color-hq-amber: var(--hq-accent);
+    --color-hq-green: var(--hq-text);
+    --color-hq-cyan: var(--hq-text-secondary);
+    --color-hq-red: var(--hq-danger);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -53,30 +59,29 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
+    --radius-sm: calc(var(--radius) * 0.5);
+    --radius-md: calc(var(--radius) * 0.75);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) * 1.4);
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
-    --radius: 0.625rem;
+    --radius: 0.5rem;
 
-    /* Warm "paper" light palette */
-    --hq-bg: #f4f1e8;
-    --hq-surface: #faf8f2;
-    --hq-elevated: #efece0;
-    --hq-border: #e2ddce;
-    --hq-amber: #c17d16;
-    --hq-green: #4f8a3d;
-    --hq-cyan: #2f7e8f;
-    --hq-red: #c2482f;
-    --hq-text: #2a2823;
-    --hq-text-secondary: #6b6656;
-    --hq-text-muted: #9a9482;
+    /* Whiteout — light theme */
+    --hq-bg: #edece8;
+    --hq-surface: #f4f3f0;
+    --hq-elevated: #e3e2dd;
+    --hq-border: #d2d1ca;
+    --hq-accent: #e64d14;
+    --hq-danger: #c44a35;
+    --hq-text: #1b1c20;
+    --hq-text-secondary: #5b5d5f;
+    --hq-text-muted: #8f918c;
 
     --background: var(--hq-bg);
     --foreground: var(--hq-text);
@@ -84,46 +89,44 @@
     --card-foreground: var(--hq-text);
     --popover: var(--hq-surface);
     --popover-foreground: var(--hq-text);
-    --primary: var(--hq-amber);
-    --primary-foreground: #faf8f2;
+    --primary: var(--hq-accent);
+    --primary-foreground: #f4f3f0;
     --secondary: var(--hq-elevated);
     --secondary-foreground: var(--hq-text);
     --muted: var(--hq-elevated);
     --muted-foreground: var(--hq-text-secondary);
     --accent: var(--hq-elevated);
     --accent-foreground: var(--hq-text);
-    --destructive: var(--hq-red);
+    --destructive: var(--hq-danger);
     --border: var(--hq-border);
     --input: var(--hq-border);
-    --ring: var(--hq-amber);
-    --chart-1: var(--hq-amber);
-    --chart-2: var(--hq-green);
-    --chart-3: var(--hq-cyan);
-    --chart-4: var(--hq-red);
-    --chart-5: var(--hq-text-secondary);
+    --ring: var(--hq-accent);
+    --chart-1: var(--hq-accent);
+    --chart-2: var(--hq-text);
+    --chart-3: var(--hq-text-secondary);
+    --chart-4: var(--hq-danger);
+    --chart-5: var(--hq-text-muted);
     --sidebar: var(--hq-surface);
     --sidebar-foreground: var(--hq-text);
-    --sidebar-primary: var(--hq-amber);
-    --sidebar-primary-foreground: #faf8f2;
+    --sidebar-primary: var(--hq-accent);
+    --sidebar-primary-foreground: #f4f3f0;
     --sidebar-accent: var(--hq-elevated);
     --sidebar-accent-foreground: var(--hq-text);
     --sidebar-border: var(--hq-border);
-    --sidebar-ring: var(--hq-amber);
+    --sidebar-ring: var(--hq-accent);
 }
 
 .dark {
-    /* Warm near-black terminal palette (primary theme) */
-    --hq-bg: #0a0a0a;
-    --hq-surface: #141311;
-    --hq-elevated: #1e1b17;
-    --hq-border: #2a2723;
-    --hq-amber: #f5a524;
-    --hq-green: #8fc97f;
-    --hq-cyan: #5cb3c9;
-    --hq-red: #e5644e;
-    --hq-text: #e8e3d6;
-    --hq-text-secondary: #9b968a;
-    --hq-text-muted: #6b6659;
+    /* Graphite — native theme */
+    --hq-bg: #131417;
+    --hq-surface: #1a1c20;
+    --hq-elevated: #232629;
+    --hq-border: #2e3236;
+    --hq-accent: #ff5c1f;
+    --hq-danger: #e0563f;
+    --hq-text: #eceae5;
+    --hq-text-secondary: #a2a49f;
+    --hq-text-muted: #64676a;
 
     --background: var(--hq-bg);
     --foreground: var(--hq-text);
@@ -131,31 +134,31 @@
     --card-foreground: var(--hq-text);
     --popover: var(--hq-surface);
     --popover-foreground: var(--hq-text);
-    --primary: var(--hq-amber);
-    --primary-foreground: #0a0a0a;
+    --primary: var(--hq-accent);
+    --primary-foreground: #131417;
     --secondary: var(--hq-elevated);
     --secondary-foreground: var(--hq-text);
     --muted: var(--hq-elevated);
     --muted-foreground: var(--hq-text-secondary);
     --accent: var(--hq-elevated);
     --accent-foreground: var(--hq-text);
-    --destructive: var(--hq-red);
+    --destructive: var(--hq-danger);
     --border: var(--hq-border);
     --input: var(--hq-border);
-    --ring: var(--hq-amber);
-    --chart-1: var(--hq-amber);
-    --chart-2: var(--hq-green);
-    --chart-3: var(--hq-cyan);
-    --chart-4: var(--hq-red);
-    --chart-5: var(--hq-text-secondary);
+    --ring: var(--hq-accent);
+    --chart-1: var(--hq-accent);
+    --chart-2: var(--hq-text);
+    --chart-3: var(--hq-text-secondary);
+    --chart-4: var(--hq-danger);
+    --chart-5: var(--hq-text-muted);
     --sidebar: var(--hq-surface);
     --sidebar-foreground: var(--hq-text);
-    --sidebar-primary: var(--hq-amber);
-    --sidebar-primary-foreground: #0a0a0a;
+    --sidebar-primary: var(--hq-accent);
+    --sidebar-primary-foreground: #131417;
     --sidebar-accent: var(--hq-elevated);
     --sidebar-accent-foreground: var(--hq-text);
     --sidebar-border: var(--hq-border);
-    --sidebar-ring: var(--hq-amber);
+    --sidebar-ring: var(--hq-accent);
 }
 
 @layer base {
@@ -164,20 +167,6 @@
     }
   body {
     @apply bg-background text-foreground;
-    /* Subtle graph-paper grid, warm and faint in both themes */
-    background-image:
-      linear-gradient(
-        to right,
-        color-mix(in oklab, var(--foreground) 4%, transparent) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        color-mix(in oklab, var(--foreground) 4%, transparent) 1px,
-        transparent 1px
-      );
-    background-size: 40px 40px;
-    background-attachment: fixed;
     }
   html {
     @apply font-sans;
@@ -185,8 +174,30 @@
 }
 
 @layer utilities {
-  /* Amber glow used on the wordmark / active accents, from the concept */
-  .hq-glow {
-    text-shadow: 0 0 24px color-mix(in oklab, var(--hq-amber) 55%, transparent);
+  /* Display voice: Archivo condensed caps (variable wdth axis). Page
+     titles, camp names, big numerals, buttons. See DESIGN.md §2. */
+  .hq-display {
+    font-stretch: 66%;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  /* Overline labels: the smallest display voice. */
+  .hq-overline {
+    font-stretch: 66%;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-weight: 700;
+    font-size: 0.6875rem; /* 11px */
+    line-height: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

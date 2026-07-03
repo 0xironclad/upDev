@@ -27,7 +27,7 @@ export function MarkCompleteButton({ skillId }: { skillId: string }) {
       type="button"
       onClick={onClick}
       disabled={pending || done}
-      className="inline-flex items-center gap-2 rounded-sm border border-hq-green/40 bg-hq-green/10 px-3 py-1.5 text-sm text-hq-green transition-colors hover:bg-hq-green/20 disabled:opacity-60"
+      className="hq-display inline-flex items-center gap-2 rounded-sm bg-hq-accent px-4 py-2.5 text-xs font-bold text-hq-bg transition-colors duration-150 hover:bg-hq-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent disabled:opacity-60"
     >
       <Check className="size-4" />
       {done ? "Completed" : pending ? "Saving…" : "Mark as Completed"}

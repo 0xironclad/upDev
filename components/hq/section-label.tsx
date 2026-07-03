@@ -15,7 +15,7 @@ export function SectionLabel({
         className
       )}
     >
-      <span className="text-hq-green">&gt;</span>
+      <span className="text-hq-accent">&gt;</span>
       {children}
     </div>
   )

@@ -23,7 +23,7 @@ export function SignOutButton() {
       type="button"
       onClick={signOut}
       disabled={pending}
-      className="inline-flex items-center gap-1.5 font-mono text-xs text-hq-text-muted transition-colors hover:text-hq-text disabled:opacity-60"
+      className="inline-flex items-center gap-1.5 font-mono text-xs text-hq-text-muted transition-colors duration-150 hover:text-hq-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent disabled:opacity-60"
     >
       <LogOut className="size-3.5" />
       {pending ? "Signing out…" : "Sign out"}

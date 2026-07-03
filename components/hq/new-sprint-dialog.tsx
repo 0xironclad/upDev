@@ -56,7 +56,7 @@ export function NewSprintDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="week-start" className="text-xs text-hq-text-muted">
+            <Label htmlFor="week-start" className="hq-overline text-hq-text-muted">
               Week start (Monday)
             </Label>
             <Input
@@ -71,7 +71,7 @@ export function NewSprintDialog({
             </p>
           </div>
           <div>
-            <Label htmlFor="week-focus" className="text-xs text-hq-text-muted">
+            <Label htmlFor="week-focus" className="hq-overline text-hq-text-muted">
               Focus (optional)
             </Label>
             <Textarea
@@ -84,9 +84,14 @@ export function NewSprintDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={submit} disabled={pending}>
+          <button
+            type="button"
+            onClick={submit}
+            disabled={pending}
+            className="hq-display inline-flex items-center justify-center rounded-sm bg-hq-accent px-4 py-2.5 text-xs font-bold text-hq-bg transition-colors duration-150 hover:bg-hq-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent disabled:opacity-50"
+          >
             {pending ? "Creating…" : "Create sprint"}
-          </Button>
+          </button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

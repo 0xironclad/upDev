@@ -10,11 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { accent, projectStatusMeta } from "@/lib/ui"
+import { projectStatusMeta, type Accent } from "@/lib/ui"
 import { cn } from "@/lib/utils"
 import { updateProjectStatus } from "@/app/actions/roadmap"
 
 const STATUSES = ["not_started", "building", "polishing", "shipped"] as const
+
+const TONE_TEXT: Record<Accent, string> = {
+  amber: "text-hq-accent",
+  green: "text-hq-text",
+  cyan: "text-hq-text-secondary",
+  red: "text-hq-danger",
+  muted: "text-hq-text-muted",
+}
 
 export function ProjectStatusControl({
   projectId,
@@ -42,7 +50,7 @@ export function ProjectStatusControl({
         size="sm"
         className={cn(
           "w-[10rem] font-mono text-xs tracking-wider uppercase",
-          accent(meta.accent).text
+          TONE_TEXT[meta.accent]
         )}
       >
         <SelectValue />

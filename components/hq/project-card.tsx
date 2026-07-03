@@ -1,7 +1,6 @@
 import Link from "next/link"
 
 import type { Project } from "@/db/schema"
-import { cn } from "@/lib/utils"
 import { projectStatusMeta, projectTypeMeta } from "@/lib/ui"
 import { StatusBadge } from "@/components/hq/status-badge"
 
@@ -13,19 +12,27 @@ export function ProjectCard({ project }: { project: Project }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className={cn(
-        "group flex flex-col rounded-md border border-hq-border bg-hq-surface p-4 transition-colors duration-150 hover:border-hq-amber/40 hover:bg-hq-elevated",
-        isFlagship && "border-t-2 border-t-hq-amber"
-      )}
+      className="group flex flex-col rounded-lg border border-hq-border bg-hq-surface p-4 transition-colors duration-150 hover:border-hq-accent/40 hover:bg-hq-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
     >
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <StatusBadge label={type.label} tone={type.accent} />
-        <span className="font-mono text-xs text-hq-text-muted uppercase">
-          {project.id}
+      <div className="flex items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-hq-text-muted">
+        <span>{project.id}</span>
+        <span className="inline-flex items-center gap-1.5">
+          {isFlagship && (
+            <svg
+              viewBox="0 0 10 10"
+              className="size-2.5 fill-hq-accent"
+              aria-hidden
+            >
+              <polygon points="0,10 5,0 10,10" />
+            </svg>
+          )}
+          {type.label}
         </span>
       </div>
 
-      <h3 className="text-base font-semibold text-hq-text">{project.title}</h3>
+      <h3 className="mt-2 text-base font-semibold text-hq-text">
+        {project.title}
+      </h3>
       {project.purpose && (
         <p className="mt-1 line-clamp-2 text-sm text-hq-text-secondary">
           {project.purpose.split(".")[0]}.
@@ -45,7 +52,7 @@ export function ProjectCard({ project }: { project: Project }) {
         </div>
       )}
 
-      <div className="mt-3 flex items-center justify-between pt-1">
+      <div className="mt-3 pt-1">
         <StatusBadge label={status.label} tone={status.accent} />
       </div>
     </Link>

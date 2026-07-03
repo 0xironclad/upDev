@@ -20,8 +20,17 @@ const FIELDS: { key: TextField; label: string; placeholder: string }[] = [
   { key: "revisit", label: "Revisit", placeholder: "What do you need to come back to?" },
 ]
 
+// Sprint vocabulary stays literal (DESIGN.md §6); only the "active" label is
+// spoken as ON THE WALL.
+const SPRINT_LABEL: Record<string, string> = {
+  active: "ON THE WALL",
+  planned: "PLANNED",
+  done: "DONE",
+}
+
 export function SprintEditor({ sprint }: { sprint: WeeklySprint }) {
   const status = sprintStatusMeta(sprint.status)
+  const statusLabel = SPRINT_LABEL[sprint.status] ?? status.label
   const [savedAt, setSavedAt] = React.useState(false)
   const [, startTransition] = React.useTransition()
 
@@ -63,17 +72,17 @@ export function SprintEditor({ sprint }: { sprint: WeeklySprint }) {
         <div className="font-mono text-sm text-hq-text">{sprint.weekLabel}</div>
         <div className="flex items-center gap-2">
           {savedAt && (
-            <span className="font-mono text-xs text-hq-green">Saved</span>
+            <span className="font-mono text-xs text-hq-text-secondary">
+              Saved
+            </span>
           )}
-          <StatusBadge label={status.label} tone={status.accent} />
+          <StatusBadge label={statusLabel} tone={status.accent} />
         </div>
       </div>
 
       {/* Days studied dot tracker */}
       <div className="mt-4">
-        <Label className="font-mono text-[10px] uppercase tracking-widest text-hq-text-muted">
-          Days studied
-        </Label>
+        <Label className="hq-overline text-hq-text-muted">Days studied</Label>
         <div className="mt-1.5 flex items-center gap-2">
           <div className="flex gap-1.5">
             {Array.from({ length: 7 }).map((_, i) => {
@@ -87,8 +96,8 @@ export function SprintEditor({ sprint }: { sprint: WeeklySprint }) {
                   className={cn(
                     "size-4 rounded-full border transition-colors duration-150",
                     filled
-                      ? "border-hq-green bg-hq-green"
-                      : "border-hq-border hover:border-hq-green/60"
+                      ? "border-hq-text bg-hq-text"
+                      : "border-hq-border hover:border-hq-text/60"
                   )}
                 />
               )
