@@ -41,10 +41,10 @@ export function SkillCompleteToggle({
       aria-pressed={optimisticDone}
       aria-label={optimisticDone ? "Mark not started" : "Mark completed"}
       className={cn(
-        "flex size-5 items-center justify-center rounded-sm border transition-colors duration-150",
+        "flex size-5 items-center justify-center rounded-sm border transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent",
         optimisticDone
-          ? "border-hq-green bg-hq-green/20 text-hq-green"
-          : "border-hq-border text-transparent hover:border-hq-green/60"
+          ? "border-hq-text bg-hq-text/15 text-hq-text"
+          : "border-hq-border text-transparent hover:border-hq-accent/60"
       )}
     >
       <Check className="size-3.5" />

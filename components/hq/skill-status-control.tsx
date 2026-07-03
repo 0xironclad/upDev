@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { accent, skillStatusMeta } from "@/lib/ui"
+import { skillStatusMeta, type Accent } from "@/lib/ui"
 import { cn } from "@/lib/utils"
 import { updateSkillStatus } from "@/app/actions/roadmap"
 
@@ -21,6 +21,14 @@ const STATUSES = [
   "completed",
   "blocked",
 ] as const
+
+const TONE_TEXT: Record<Accent, string> = {
+  amber: "text-hq-accent",
+  green: "text-hq-text",
+  cyan: "text-hq-text-secondary",
+  red: "text-hq-danger",
+  muted: "text-hq-text-muted",
+}
 
 export function SkillStatusControl({
   skillId,
@@ -48,7 +56,7 @@ export function SkillStatusControl({
         size="sm"
         className={cn(
           "w-[11rem] font-mono text-xs tracking-wider uppercase",
-          accent(meta.accent).text
+          TONE_TEXT[meta.accent]
         )}
       >
         <SelectValue />

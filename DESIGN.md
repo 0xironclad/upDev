@@ -41,7 +41,8 @@ tinted toward the accent's warmth (never pure gray/black/white).
   (solid `--hq-text`); completion reads as solidity, not a second hue.
 - Accent appears only as: current/active state, the Route's climbed segment,
   primary buttons, focus rings, "next action". Never decorative, never on
-  inactive elements.
+  inactive elements. One sanctioned brand cue: the `>` glyph in section
+  labels (SectionLabel) may be accent.
 - Tracks are distinguished by typography (condensed caps labels A / B / C),
   not hue. `--hq-danger` only for `blocked` and destructive actions.
 - Legacy `--hq-amber/green/cyan/red` tokens are remapped (amber→accent,

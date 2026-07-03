@@ -25,6 +25,13 @@ export const dynamic = "force-dynamic"
 
 const DAY = 86_400_000
 
+function daysUntil(date: string, now: Date = new Date()): number {
+  return Math.max(
+    0,
+    Math.ceil((Date.parse(`${date}T00:00:00Z`) - now.getTime()) / DAY)
+  )
+}
+
 export default async function DashboardPage() {
   const [
     phasesWithContent,
@@ -49,12 +56,7 @@ export default async function DashboardPage() {
   const activeMeta = currentSkill ? skillStatusMeta(currentSkill.status) : null
 
   const daysToCamp = currentPhase?.dateEnd
-    ? Math.max(
-        0,
-        Math.ceil(
-          (Date.parse(`${currentPhase.dateEnd}T00:00:00Z`) - Date.now()) / DAY
-        )
-      )
+    ? daysUntil(currentPhase.dateEnd)
     : null
 
   return (

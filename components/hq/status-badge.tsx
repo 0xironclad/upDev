@@ -1,5 +1,15 @@
 import { cn } from "@/lib/utils"
-import { accent, type Accent } from "@/lib/ui"
+import { type Accent } from "@/lib/ui"
+
+// Semantic tone map (DESIGN.md §1). Accent border+text only for the active
+// tone; every other state reads in neutral text with a hairline border.
+const TONE: Record<Accent, string> = {
+  amber: "border-hq-accent/40 text-hq-accent",
+  green: "border-hq-border text-hq-text",
+  cyan: "border-hq-border text-hq-text-secondary",
+  red: "border-hq-danger/40 text-hq-danger",
+  muted: "border-hq-border text-hq-text-muted",
+}
 
 export function StatusBadge({
   label,
@@ -10,14 +20,11 @@ export function StatusBadge({
   tone: Accent
   className?: string
 }) {
-  const a = accent(tone)
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest transition-colors duration-150",
-        a.text,
-        a.border,
-        a.bg,
+        "inline-flex items-center rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.2em] transition-colors duration-150",
+        TONE[tone],
         className
       )}
     >
