@@ -102,8 +102,10 @@ An SVG elevation profile of all 5 phases, x = time (12 months), y = altitude
 3. **Altitude readout** (sidebar): text-only: `ALT 612m · CAMP 1 · DAY 3/365`
    + a 2px progress hairline.
 
-Altitude model: each skill = 300m of climb + 200m per project shipped
-(total 17×300 + 6×~17 ≈ 5,200m at summit). Deterministic from DB progress.
+Altitude model: each skill = 300m of climb, each project = 200m
+(17×300 + 6×200 = 6,300m at summit). The final phase has no camp node: its
+endpoint is the summit. Deterministic from DB progress; a shipped project
+visibly moves the line.
 
 ## 6. Component patterns
 
