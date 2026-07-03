@@ -124,8 +124,8 @@ export default async function RoadmapPage() {
                 )}
               </div>
 
-              {/* Waypoints */}
-              <div className="mt-4 grid grid-cols-1 gap-3">
+              {/* Waypoints: ruled rows, not cards */}
+              <div className="mt-4">
                 {phase.skills.map((skill) => (
                   <SkillCard key={skill.id} skill={skill} />
                 ))}

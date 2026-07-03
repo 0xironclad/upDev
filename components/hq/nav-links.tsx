@@ -43,13 +43,18 @@ export function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             href={href}
             onClick={onNavigate}
             className={cn(
-              "flex items-center gap-2.5 rounded-sm border-l-2 px-3 py-2 text-sm transition-colors duration-150",
+              "flex items-center gap-2.5 rounded-sm px-3 py-2 text-sm transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent",
               active
-                ? "border-hq-amber bg-hq-elevated text-hq-text"
-                : "border-transparent text-hq-text-secondary hover:bg-hq-elevated hover:text-hq-text"
+                ? "bg-hq-elevated font-medium text-hq-text"
+                : "text-hq-text-secondary hover:bg-hq-elevated hover:text-hq-text"
             )}
           >
-            <Icon className="size-4 shrink-0" />
+            <Icon
+              className={cn(
+                "size-4 shrink-0",
+                active && "text-hq-accent"
+              )}
+            />
             <span className="truncate">{label}</span>
           </Link>
         )
