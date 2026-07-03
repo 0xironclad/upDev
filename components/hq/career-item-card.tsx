@@ -5,7 +5,7 @@ import { toast } from "sonner"
 
 import type { CareerItem } from "@/db/schema"
 import { cn } from "@/lib/utils"
-import { accent, careerStatusMeta } from "@/lib/ui"
+import { careerStatusMeta } from "@/lib/ui"
 import { formatShortDate } from "@/lib/format"
 import {
   Tooltip,
@@ -19,6 +19,14 @@ const NEXT_STATUS: Record<string, string> = {
   todo: "in_progress",
   in_progress: "done",
   done: "todo",
+}
+
+// Status is spoken in text, not hue (DESIGN.md §1): accent only marks the
+// active item; done reads as solidity, queued as muted.
+const STATUS_LABEL_CLASS: Record<string, string> = {
+  todo: "text-hq-text-muted",
+  in_progress: "text-hq-accent",
+  done: "text-hq-text",
 }
 
 export function CareerItemCard({ item }: { item: CareerItem }) {
@@ -46,9 +54,16 @@ export function CareerItemCard({ item }: { item: CareerItem }) {
         <div
           role="button"
           tabIndex={0}
-          className="cursor-pointer rounded-md border border-hq-border bg-hq-surface p-3 transition-colors hover:border-hq-amber/40 hover:bg-hq-elevated"
+          className="cursor-pointer rounded-lg border border-hq-border bg-hq-surface p-3 transition-colors duration-150 hover:bg-hq-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
         >
-          <div className="text-sm font-medium text-hq-text">{item.title}</div>
+          <div
+            className={cn(
+              "text-sm font-medium text-hq-text",
+              optimisticStatus === "done" && "line-through"
+            )}
+          >
+            {item.title}
+          </div>
 
           <div className="mt-2 flex items-center justify-between gap-2">
             <button
@@ -56,10 +71,8 @@ export function CareerItemCard({ item }: { item: CareerItem }) {
               onClick={cycleStatus}
               aria-label="Cycle status"
               className={cn(
-                "rounded-sm border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest transition-colors",
-                accent(meta.accent).text,
-                accent(meta.accent).border,
-                accent(meta.accent).bg
+                "rounded-sm font-mono text-[10px] uppercase tracking-[0.2em] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent",
+                STATUS_LABEL_CLASS[optimisticStatus] ?? "text-hq-text-muted"
               )}
             >
               {meta.label}

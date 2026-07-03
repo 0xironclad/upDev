@@ -22,7 +22,6 @@ import {
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
 import { CAREER_CATEGORIES, CATEGORY_META, type CareerCategory } from "@/lib/career"
 import { careerStatusMeta } from "@/lib/ui"
 import { upsertCareerItem } from "@/app/actions/career"
@@ -83,7 +82,7 @@ export function CareerItemDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="ci-title" className="text-xs text-hq-text-muted">
+            <Label htmlFor="ci-title" className="hq-overline text-hq-text-muted">
               Title
             </Label>
             <Input
@@ -96,7 +95,7 @@ export function CareerItemDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-xs text-hq-text-muted">Category</Label>
+              <Label className="hq-overline text-hq-text-muted">Category</Label>
               <Select
                 value={category}
                 onValueChange={(v) => setCategory(v as CareerCategory)}
@@ -114,7 +113,7 @@ export function CareerItemDialog({
               </Select>
             </div>
             <div>
-              <Label className="text-xs text-hq-text-muted">Status</Label>
+              <Label className="hq-overline text-hq-text-muted">Status</Label>
               <Select
                 value={status}
                 onValueChange={(v) => setStatus(v as CareerStatus)}
@@ -134,7 +133,7 @@ export function CareerItemDialog({
           </div>
 
           <div>
-            <Label htmlFor="ci-date" className="text-xs text-hq-text-muted">
+            <Label htmlFor="ci-date" className="hq-overline text-hq-text-muted">
               Target date
             </Label>
             <Input
@@ -147,7 +146,7 @@ export function CareerItemDialog({
           </div>
 
           <div>
-            <Label htmlFor="ci-notes" className="text-xs text-hq-text-muted">
+            <Label htmlFor="ci-notes" className="hq-overline text-hq-text-muted">
               Notes
             </Label>
             <Textarea
@@ -159,9 +158,14 @@ export function CareerItemDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={submit} disabled={pending}>
+          <button
+            type="button"
+            onClick={submit}
+            disabled={pending}
+            className="hq-display inline-flex items-center justify-center rounded-sm bg-hq-accent px-4 py-2.5 text-xs font-bold text-hq-bg transition-colors duration-150 hover:bg-hq-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent disabled:opacity-50"
+          >
             {pending ? "Saving…" : item ? "Save changes" : "Add item"}
-          </Button>
+          </button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

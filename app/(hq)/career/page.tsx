@@ -11,16 +11,20 @@ export const dynamic = "force-dynamic"
 
 export default async function CareerPage() {
   const items = await getCareerItems()
+  const doneCount = items.filter((i) => i.status === "done").length
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
-      <header className="mb-6">
-        <div className="font-mono text-xs uppercase tracking-widest text-hq-text-muted">
-          Cracked Dev HQ
-        </div>
-        <h1 className="mt-1 text-3xl font-bold text-hq-text">Career Growth</h1>
-        <p className="mt-1 text-sm text-hq-text-secondary">
-          The bridge from learning to hired — every skill becomes a resume edit,
+      <header className="mb-8">
+        <div className="hq-overline text-hq-text-muted">Cracked Dev HQ</div>
+        <h1 className="hq-display mt-2 text-4xl font-extrabold text-hq-text">
+          Career Growth
+        </h1>
+        <p className="mt-2 font-mono text-xs text-hq-text-secondary">
+          {doneCount} of {items.length} items done
+        </p>
+        <p className="mt-2 max-w-[68ch] text-sm text-hq-text-secondary">
+          The bridge from learning to hired: every skill becomes a resume edit,
           a portfolio piece, or an application.
         </p>
       </header>
@@ -34,11 +38,9 @@ export default async function CareerPage() {
             <div key={category} className="flex flex-col">
               <div className="mb-3 flex items-center justify-between gap-2 border-b border-hq-border pb-2">
                 <div className="flex items-center gap-1.5">
-                  <Icon className="size-4 text-hq-amber" />
-                  <span className="font-mono text-xs uppercase tracking-wider text-hq-text">
-                    {meta.label}
-                  </span>
-                  <span className="font-mono text-xs text-hq-text-muted">
+                  <Icon className="size-4 text-hq-text-muted" />
+                  <span className="hq-overline text-hq-text">{meta.label}</span>
+                  <span className="font-mono text-xs text-hq-text-muted tabular-nums">
                     {columnItems.length}
                   </span>
                 </div>
@@ -48,7 +50,7 @@ export default async function CareerPage() {
                     <button
                       type="button"
                       aria-label={`Add ${meta.label} item`}
-                      className="rounded-sm p-1 text-hq-text-muted transition-colors hover:bg-hq-elevated hover:text-hq-text"
+                      className="rounded-sm p-1 text-hq-text-muted transition-colors duration-150 hover:bg-hq-elevated hover:text-hq-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hq-accent"
                     >
                       <Plus className="size-4" />
                     </button>
