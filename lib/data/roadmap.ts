@@ -7,11 +7,12 @@ import {
   careerItems,
   phases,
   projects,
+  skillResources,
   skills,
   tracks,
   weeklySprints,
 } from "@/db/schema"
-import type { Phase, Project, Skill, Track } from "@/db/schema"
+import type { Phase, Project, Skill, SkillResource, Track } from "@/db/schema"
 
 export async function getTracks(): Promise<Track[]> {
   return db.select().from(tracks).orderBy(asc(tracks.order))
@@ -147,6 +148,7 @@ export type SkillDetail = {
   prev: Skill | null
   next: Skill | null
   relatedProjects: Project[]
+  resources: SkillResource[]
 }
 
 /** Everything the skill detail page needs, composed in one place. */
@@ -154,7 +156,8 @@ export async function getSkillDetail(slug: string): Promise<SkillDetail | null> 
   const skill = await getSkillBySlug(slug)
   if (!skill) return null
 
-  const [phase, track, phaseSkills, allProjects] = await Promise.all([
+  const [phase, track, phaseSkills, allProjects, resources] =
+    await Promise.all([
     skill.phaseId
       ? db
           .select()
@@ -177,6 +180,11 @@ export async function getSkillDetail(slug: string): Promise<SkillDetail | null> 
           .orderBy(asc(skills.order))
       : Promise.resolve([] as Skill[]),
     getProjects(),
+    db
+      .select()
+      .from(skillResources)
+      .where(eq(skillResources.skillId, skill.id))
+      .orderBy(asc(skillResources.order), asc(skillResources.id)),
   ])
 
   const idx = phaseSkills.findIndex((s) => s.id === skill.id)
@@ -191,5 +199,5 @@ export async function getSkillDetail(slug: string): Promise<SkillDetail | null> 
       .includes(skill.id)
   )
 
-  return { skill, phase, track, prev, next, relatedProjects }
+  return { skill, phase, track, prev, next, relatedProjects, resources }
 }
