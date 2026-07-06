@@ -1,9 +1,6 @@
 import "server-only"
 
-import { asc, eq } from "drizzle-orm"
-
-import { db } from "@/db"
-import { phases, skills, tracks } from "@/db/schema"
+import { getPhases, getSkills, getTracks } from "@/lib/data/roadmap"
 import type { Phase, Skill } from "@/db/schema"
 
 export type Progress = {
@@ -11,6 +8,9 @@ export type Progress = {
   completed: number
   total: number
 }
+
+// All progress reads derive from the request-cached base fetchers in
+// lib/data/roadmap — none of these functions issue their own queries.
 
 function toProgress(rows: { isDone: boolean }[]): Progress {
   const total = rows.length
@@ -23,29 +23,22 @@ function toProgress(rows: { isDone: boolean }[]): Progress {
 }
 
 export async function getOverallProgress(): Promise<Progress> {
-  const rows = await db.select({ isDone: skills.isDone }).from(skills)
-  return toProgress(rows)
+  return toProgress(await getSkills())
 }
 
 export async function getPhaseProgress(phaseId: string): Promise<Progress> {
-  const rows = await db
-    .select({ isDone: skills.isDone })
-    .from(skills)
-    .where(eq(skills.phaseId, phaseId))
-  return toProgress(rows)
+  const all = await getSkills()
+  return toProgress(all.filter((s) => s.phaseId === phaseId))
 }
 
 export async function getTrackProgress(trackId: string): Promise<Progress> {
-  const rows = await db
-    .select({ isDone: skills.isDone })
-    .from(skills)
-    .where(eq(skills.trackId, trackId))
-  return toProgress(rows)
+  const all = await getSkills()
+  return toProgress(all.filter((s) => s.trackId === trackId))
 }
 
 /** Active skill: the one in progress, else the first not-yet-done skill in order. */
 export async function getCurrentSkill(): Promise<Skill | null> {
-  const all = await db.select().from(skills).orderBy(asc(skills.order))
+  const all = await getSkills()
   const inProgress = all.find((s) => s.status === "in_progress")
   if (inProgress) return inProgress
   return all.find((s) => !s.isDone) ?? null
@@ -53,26 +46,20 @@ export async function getCurrentSkill(): Promise<Skill | null> {
 
 /** The phase that contains the current active skill (fallback: first phase). */
 export async function getCurrentPhase(): Promise<Phase | null> {
-  const current = await getCurrentSkill()
+  const [current, allPhases] = await Promise.all([
+    getCurrentSkill(),
+    getPhases(),
+  ])
   if (current?.phaseId) {
-    const [phase] = await db
-      .select()
-      .from(phases)
-      .where(eq(phases.id, current.phaseId))
+    const phase = allPhases.find((p) => p.id === current.phaseId)
     if (phase) return phase
   }
-  const [first] = await db
-    .select()
-    .from(phases)
-    .orderBy(asc(phases.order))
-    .limit(1)
-  return first ?? null
+  return allPhases[0] ?? null
 }
 
 /** The next not-done skill after the current active one, in global order. */
 export async function getNextSkill(): Promise<Skill | null> {
-  const all = await db.select().from(skills).orderBy(asc(skills.order))
-  const current = await getCurrentSkill()
+  const [all, current] = await Promise.all([getSkills(), getCurrentSkill()])
   if (!current) return null
   const idx = all.findIndex((s) => s.id === current.id)
   for (let i = idx + 1; i < all.length; i++) {
@@ -83,6 +70,6 @@ export async function getNextSkill(): Promise<Skill | null> {
 
 /** Track metadata keyed by id, for color/name lookups in the UI. */
 export async function getTrackMap() {
-  const rows = await db.select().from(tracks)
+  const rows = await getTracks()
   return new Map(rows.map((t) => [t.id, t]))
 }
